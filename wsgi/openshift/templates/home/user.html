@@ -1,0 +1,179 @@
+
+<style type="text/css">
+
+input#search_key{
+
+	width: 50%;
+	height: 40px;
+	font-size: 130%;
+	padding-left: 15px;
+	margin-bottom: 20px;
+	box-shadow: 5px;
+
+}
+
+header#horizontal_panel{
+
+	background-color: #538EC6;
+	position: fixed;
+	z-index: 10;
+	width: 100%;
+	margin-top:0;
+
+}
+
+header#horizontal_panel ul li{
+	display: inline;
+	
+
+}
+header#horizontal_panel ul li a{
+	text-decoration: none;
+	padding: 6px;
+	border: solid 1px #6DBDE2;
+	background-color: white;
+	color: black;
+	border-radius: 5px;
+	margin: 1px;
+
+}
+
+div#results_list{
+
+	margin: 3%;
+
+	/*
+	border: solid 1px black ;
+	*/
+}
+
+div.result{
+	border: solid black 1px;
+	margin-left: 30%;
+	margin-right: 30%;
+	margin-top: 5px;
+	padding: 10px;
+	border-radius: 5px;
+}
+
+
+</style>
+
+<html>
+	<head>
+		<title>
+			Scrape me
+		</title>
+
+		    <script src="jquery-1.8.3.min.js"></script>
+
+
+			<script type="text/javascript">
+
+				$(document).ready(call_on_ready);				
+				function call_on_ready(){
+					//$("#user_data_fetch_button").change(function(){
+					
+					$("#user_data_fetch_button").click(function(){
+
+						var node = document.getElementById("results_list");
+						while (node.hasChildNodes()) {
+			 				node.removeChild(node.lastChild);
+						}
+						var name = $("input#search_key").val();
+						//alert(name);
+						getUserData(name);
+					});
+				}
+
+				function getUserData(search_key)
+				{
+
+						var finalUrl='/user/'+search_key;
+						//alert( "Fetching");// with "+image_id);
+					     var req=$.ajax({
+					                   type:"GET",
+					                   url:finalUrl,
+					                   //contentType: "application/json; charset=utf-8",
+					                   dataType:"JSON",
+					                   success: function(results_array){
+					                   		addUserResults(results_array);
+					                },
+					               complete:function(jqXHR, textStatus) {
+					                 // alert("request complete "+textStatus);
+					               },
+					              error: function(xhr, textStatus, errorThrown){
+					                //  alert('request failed->'+textStatus);
+					              }   
+					              
+					              
+					     });  
+				}
+
+				function addUserResults(results_array){
+					var result = document.createElement("div");
+					
+					//alert("appending");
+					var str="";
+					for(i=0;i<results_array.length ; i++)
+					{
+						result = document.createElement("div");
+						$(result).attr('class','result');
+						var name = "Name :"+ results_array[i].name + "<BR>";
+						var url = "URL :"+results_array[i].url + "<BR>";
+						var has_video = "Has videos? "+ (parseInt(results_array[i].has_video)>0?"Yes":"No")+ "<BR>";
+var has_featured_video = "Staff picks ? : "+(parseInt(results_array[i].has_featured_video)>0?"Yes":"No")+ "<BR>";
+						var isPaid  = "Paid A/c ? : " + (parseInt(results_array[i].is_paid)>0?"Yes":"No")+ "<BR>";
+
+						$(result).html(name+url+has_video+has_featured_video+isPaid);
+						//$(result).html(str);
+						$("#results_list").append(result);
+
+					}
+					
+					
+				}
+
+
+			</script>
+	</head>
+
+	<header id="horizontal_panel">
+		<ul>
+			<li>
+				<a href="#">Search</a>
+			<li>
+			<li>
+				<a href="#">About </a>
+			</li>
+
+			<li>
+				<a href="#"> Developer </a>
+			</li>
+
+		</ul>
+
+	</header><BR>
+<BR>
+	<BR>
+
+	<body>
+		<center>
+			<input name="search_key" id="search_key" placeholder="Vimeo user name">
+			<input type="button" id="user_data_fetch_button" value = "Get results"> 
+		</center>
+
+
+		<br>
+
+		<div id="results_list">
+			<div id="result">
+
+
+			</div>
+
+		</div>
+
+	</body>
+
+</html>
