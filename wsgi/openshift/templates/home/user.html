@@ -120,7 +120,8 @@ div.result{
 						result = document.createElement("div");
 						$(result).attr('class','result');
 						var name = "Name :"+ results_array[i].name + "<BR>";
-						var url = "URL :"+results_array[i].url + "<BR>";
+						var link_url = "<a href='"+results_array[i].url+"'>"+results_array[i].url+"</a>";
+						var url = "URL :"+link_url + "<BR>";
 						var has_video = "Has videos? "+ (parseInt(results_array[i].has_video)>0?"Yes":"No")+ "<BR>";
 var has_featured_video = "Staff picks ? : "+(parseInt(results_array[i].has_featured_video)>0?"Yes":"No")+ "<BR>";
 						var isPaid  = "Paid A/c ? : " + (parseInt(results_array[i].is_paid)>0?"Yes":"No")+ "<BR>";
