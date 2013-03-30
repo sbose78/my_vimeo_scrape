@@ -56,6 +56,9 @@ div.result{
 	border-radius: 5px;
 }
 
+ul#filter li{
+	display: inline;
+}
 
 </style>
 
@@ -70,20 +73,31 @@ div.result{
 
 			<script type="text/javascript">
 
+				var search_results;
+
 				$(document).ready(call_on_ready);				
 				function call_on_ready(){
 					//$("#user_data_fetch_button").change(function(){
 					
 					$("#user_data_fetch_button").click(function(){
 
-						var node = document.getElementById("results_list");
-						while (node.hasChildNodes()) {
-			 				node.removeChild(node.lastChild);
-						}
+						reset();
 						var name = $("input#search_key").val();
 						//alert(name);
 						getUserData(name);
 					});
+
+					$("ul#filter li a").click(function(){
+						//alert($(this).attr("id"));
+						addUserResults($(this).attr("id"))
+					});
+				}
+
+				function reset(){
+					var node = document.getElementById("results_list");
+						while (node.hasChildNodes()) {
+			 				node.removeChild(node.lastChild);
+						}
 				}
 
 				function getUserData(search_key)
@@ -97,7 +111,8 @@ div.result{
 					                   //contentType: "application/json; charset=utf-8",
 					                   dataType:"JSON",
 					                   success: function(results_array){
-					                   		addUserResults(results_array);
+					                   		search_results =  results_array[0].users;
+					                   		addUserResults("filter_all");
 					                },
 					               complete:function(jqXHR, textStatus) {
 					                 // alert("request complete "+textStatus);
@@ -110,27 +125,41 @@ div.result{
 					     });  
 				}
 
-				function addUserResults(results_array){
+				function addUserResults(filter_type){
+					reset();
+					count = 0;
+					results_array = search_results ;
 					var result = document.createElement("div");
 					
-					//alert("appending");
 					var str="";
 					for(i=0;i<results_array.length ; i++)
 					{
-						result = document.createElement("div");
-						$(result).attr('class','result');
-						var name = "Name :"+ results_array[i].name + "<BR>";
-						var link_url = "<a href='"+results_array[i].url+"'>"+results_array[i].url+"</a>";
-						var url = "URL :"+link_url + "<BR>";
-						var has_video = "Has videos? "+ (parseInt(results_array[i].has_video)>0?"Yes":"No")+ "<BR>";
-var has_featured_video = "Staff picks ? : "+(parseInt(results_array[i].has_featured_video)>0?"Yes":"No")+ "<BR>";
-						var isPaid  = "Paid A/c ? : " + (parseInt(results_array[i].is_paid)>0?"Yes":"No")+ "<BR>";
+						if(
+							filter_type=="filter_all" 
+							|| filter_type == "filter_paying" && results_array[i].is_paid>0 
+							|| filter_type == "filter_uploaded" && results_array[i].has_video>0
+							|| filter_type == "filter_staff" && results_array[i].has_featured_video>0
+						) 
+						{	count++;
+							result = document.createElement("div");
+							$(result).attr('class','result');
+							var name = "Name :"+ results_array[i].name + "<BR>";
+							var link_url = "<a href='"+results_array[i].url+"'>"+results_array[i].url+"</a>";
+							var url = "URL :"+link_url + "<BR>";
+							var has_video = "Has videos? "+ (parseInt(results_array[i].has_video)>0?"Yes":"No")+ 
+							"<BR>";
+							var has_featured_video = "Staff picks ? : "+(parseInt(results_array[i].has_featured_video)>0?"Yes":"No")+ "<BR>";
+							var isPaid  = "Paid A/c ? : " + (parseInt(results_array[i].is_paid)>0?"Yes":"No")+ 
+							"<BR>";
 
-						$(result).html(name+url+has_video+has_featured_video+isPaid);
-						//$(result).html(str);
-						$("#results_list").append(result);
+							$(result).html(name+url+has_video+has_featured_video+isPaid);
+							//$(result).html(str);
+							$("#results_list").append(result);
+						}
 
 					}
+
+					$("div#results_count").html(count+"&nbsp; results");
 					
 					
 				}
@@ -162,10 +191,43 @@ var has_featured_video = "Staff picks ? : "+(parseInt(results_array[i].has_featu
 		<center>
 			<input name="search_key" id="search_key" placeholder="Vimeo user name">
 			<input type="button" id="user_data_fetch_button" value = "Get results"> 
-		</center>
+		
 
 
 		<br>
+
+
+		<ul id="filter">
+			<li>
+				Filter &nbsp; |	&nbsp;			
+			</li>
+
+			<li>
+				<a id="filter_all" href="#">All</a>  &nbsp; |	&nbsp;
+			</li>
+			<li>
+				<a id="filter_paying" href="#">Paying</a>  &nbsp; |	&nbsp;
+			</li>	
+			<li>
+				<a id="filter_uploaded" href="#">Uploaded</a>  &nbsp; |	&nbsp;
+			</li>
+			
+			<li>
+				<a id="filter_staff" href="#">Staff pick</a>  
+			</li>
+
+		</ul>
+<br><br>
+<hr></hr>
+
+</center>
+<br><br>
+
+		<center>
+
+			<div id="results_count"></div>
+
+		</center>
 
 		<div id="results_list">
 			<div id="result">

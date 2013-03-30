@@ -49,17 +49,24 @@ def get_user_data(request,username):
 
 def search(key):
 	cur = db.cursor() 
+	count = 0
 	key="%"+key+"%"
 	try:
-		cur.execute("""SELECT * from user where name LIKE %s""",(key))
+		# get the total number of users
+		cur.execute("""SELECT count(*) from user where name LIKE %s""",(key))
+		for row in cur.fetchall():
+			count = row[0]
+		print count
+		cur.close()
+		cur = db.cursor()
+
+		# get a maximum of 100 out of the total number of users
+		cur.execute("""SELECT * from user where name LIKE %s LIMIT 100""",(key))
 		all_results =list()
 		for row in cur.fetchall():
 			user_id=row[0]
-			print "1"
 			name = row[1].decode("latin-1")
-			print "1"
 			url = row[2].decode("latin-1")
-			print "1"
 			has_video = row[3]
 			has_featured_video = row[4]
 			is_paid = row[5]
@@ -73,8 +80,16 @@ def search(key):
 			user['is_paid'] = is_paid
 
 			all_results.append(user)
+		final_deliverable=list()
+
+		results = {}
+		results['count']=count
+		results['users']= all_results
+
+		final_deliverable.append(results)
+
 	except Exception, e:
 		print "error---" , e
 
-	print all_results
-	return all_results
+	#print all_results
+	return final_deliverable
