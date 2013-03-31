@@ -1,12 +1,19 @@
 
 
+The URL of the deployed appplication
+---------------------------------------
+
+		http://myscrape-nodejstest.rhcloud.com/
+
+
+
 The objective
 ---------------
 
-The task was to scrape out the following data from 5000+ Vimeo user page 
+The task was to scrape out the following data from 5000+ Vimeo user pages 
 and save it to a MySQL database.
 
-	1. name of the user.
+	1. Name of the user.
 
 	2. URL of the profile.
 
@@ -22,6 +29,8 @@ The algorithm
 
 De-mystifying the above requirements, 
 the following elements were dug out from the user page using the hints mentioned below.
+
+For instance, in case of http://vimeo.com/markdenega
 
 	i. Check if the currently crawled page is a user-profile page.
 
@@ -45,7 +54,7 @@ the following elements were dug out from the user page using the hints mentioned
 
     v. Whether the user has uploads:
 
-    	Existence of the following tree :
+    	The content of <b> </b> in the following tree: 
 
 	    	<ul class="block floated_list stat_list bubble_list nipple_left">
 	            <li>
@@ -58,22 +67,24 @@ the following elements were dug out from the user page using the hints mentioned
 Approach
 ------------
 
-I used a Python script to crawl vimeo and store all the links and user data in
-my local MySQL database. After details of 5000+ users were acquired, the DJANGO application was built locally and then deployed on Redhat PaaS ( Openshift ). The local MySQL database was migrated to Amazon RDS MySQL using another Python script.
+I used a Python script to crawl vimeo.com and store all the links and user data in
+my local MySQL database. After details of 5000+ users were acquired, the crawling was terminated and the DJANGO application was built locally and then deployed on Redhat PaaS ( Openshift ). The local MySQL database was migrated to Amazon RDS MySQL using another Python script.
 
 Even though there were options of using Beautiful Soup or Scrapy, I prefered experimenting with
-my own low-level implementation of the user page scraping algorithm.
+my own low-level implementation of the self-designed user profile page scraping algorithm.
 
 
 	
 
 In brief :
 
-    i. 		Scrape out each link starting from vimeo.com and save it to the 
+
+    i. 		(Staring from http://vimeo.com)
+    		Scrape out each link starting from vimeo.com and save it to the 
     		local MySQL database table called "LINK"
 
-    ii. 	Choose an unvisited link from the table "LINK" and scrape out and save 
-    		all the links. Recognise using the algorithm if the page is a user page. 
+    ii. 	Choose an unvisited link from the table "LINK", programmatically scrape out and 
+    		save all the links. Recognise using the algorithm if the page is a user page. 
 
 
     iii. 	If yes, then save the user data into the "USER" table and
@@ -88,7 +99,7 @@ In brief :
     vi.   	Write the HTML+ CSS + Javascript web page where the user has an option to 
     		query by user  name ( full or partial ) and place it under wsgi/openshift/templates/home/
 
-    viii.  The request is made by an AJAX call and the response is parsed and 
+    viii.  The request is made by an AJAX call and the JSON response is parsed and 
     	   shown in the web-page. The results are stored for re-presentation of the same data conditionally by filters.
 
 
@@ -196,7 +207,7 @@ Installation
 			 	DB_AWS_USER = "sbose78"
 				DB_AWS_PASSWORD = "XXXXXXX"
 				DB_AWS_DATABASE = "vimeodb"
-				DB_LOCAL_HOST = "vimXXXXXXXXXXXXXXazonaws.com"
+				DB_LOCAL_HOST = "localhost"
 				DB_LOCAL_PORT =3306
 				DB_LOCAL_USER = "root"
 				DB_LOCAL_PASSWORD = "qXXXXXXX6"

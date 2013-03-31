@@ -68,9 +68,11 @@ def search(key):
 		results['users']= all_results
 
 		final_deliverable.append(results)
+		#db.close()
 
 	except Exception, e:
 		print "[EXCEPTION]" , e
 
 	#print all_results
+
 	return final_deliverable

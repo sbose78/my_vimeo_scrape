@@ -183,6 +183,7 @@ hr{
 						var loading = document.createElement("img");
 						$(loading).attr("src","loading-vim.gif");
 						$("div#results_count_filter").html(loading);
+						//$("div#results_count").html("");
 
 						// get the keyword to be used for search
 						var name = $("input#search_key").val().trim();
@@ -361,60 +362,77 @@ hr{
 		<div id="developer_text">
 			<a id="developer"></a><br><br><br>
 
-			<h3> Developer </h3>
+			<h2> Developer </h2>
 
 			<p>
 
-			I used a Python script to crawl <a href="http://vimeo.com">vimeo</a> and store all the links and user data in <br>
-			my local MySQL database. 
-
-			After details of 5000+ users were acquired, the DJANGO application was built locally and then <br>
-			deployed on Redhat PaaS ( Openshift ). <br><br>
-
-			The local MySQL database was migrated to Amazon RDS MySQL using another Python script.<br><br>
-
-			Even though there were options of using 
-			<a href="https://pypi.python.org/pypi/BeautifulSoup/">Beautiful Soup</a> or 
-
-			<a href="http://www.scrapy.org/">Scrapy</a>, I prefered experimenting with <br>
-			my own low-level implementation of the user page scraping algorithm. <br><br>
-
-			In brief : <br>
-
-			<ul>
-				<li> Scrape out each link starting from vimeo.com and saving it to the local MySQL 
-				 database table called "LINK"</li>
-
-				<li> Choose an unvisited link from the table "LINK" and scrape out all the links. 
-					Recognise using the algorithm if the page is a user page. If yes, then save the user data into the "USER" table and proceed with the next unvisited link from the LINK table. 
-				</li>
-
-				<li>
-					Continue the above steps till 5000+ user profiles have been scraped.
-				</li>
-
-				<li> Write the Django appliction with a REST-style API for requesting user info for all 
-					matching user names ( and sub-strings ).
-				</li>
-				<li>
-					Write the HTML+ CSS + Javascript web page where the user has an option to query 
-					by user name ( full or partial ).<br><br>
-
-				</li>
-
-				<li>
-
-					The request is made by an AJAX call and the response is parsed and shown in the web-page.
-					The results are stored for re-presentation of the same data conditionally by filters.
-
-				</li>
+				<strong> Author :  </strong> &nbsp; Shoubhik Bose ( sbose78@gmail.com ) <br><br>
 
 
 
+				<strong> The objective :  </strong><br>
 
-			</ul>
+				<ul>
+					<li>
+						Crawl 
+						<a href="http://vimeo.com">vimeo.com </a>
+							and scrape out data of 5000+ users.
+					</li>
 
 
+					<li>
+						Develop a front-end to query the scraped user data.
+					</li>
+				</ul>
+
+				<br><br>
+
+				<strong> The code </strong>: &nbsp;
+				<a href="https://github.com/sbose78/my_vimeo_scrape">View on Github</a>
+
+				<br><br>
+
+
+				<strong> The architecture </strong><br>
+
+				<ul>
+					<li>
+						Web-framework :&nbsp; Django 
+					</li>
+					<li>
+						Database server:&nbsp; MySQL 5.5 on Amazon RDS
+					</li>
+					<li>
+						Application server:&nbsp; Redhat PaaS -
+						 <a href="http://openshift.redhat.com">OpenShift</a>
+					</li>
+
+					<li>
+						Front-end design & dev : &nbsp; HTML5 + CSS + Javascript + JQuery1.8
+					</li>
+
+				</ul>
+
+<br>
+				<strong> Test data </strong><br>
+
+				<ul>
+					<li>
+						adam
+					</li>
+						
+					<li>
+						david
+					</li>
+						
+					<li>
+						john
+					</li>
+						
+					<li>
+						mark
+					</li>
+				</ul>
 
 			</p>
 		</div>
