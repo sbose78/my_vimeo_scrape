@@ -157,6 +157,7 @@ The algorithm
 ---------------
 
 The task was to scrape out the following data from a Vimeo user page:  
+
 	1. name of the user.
 
 	2. URL of the profile.
@@ -215,11 +216,15 @@ my own low-level implementation of the user page scraping algorithm.
 
 In brief :
 
-    i. 		Scrape out each link starting from vimeo.com and save it to the local MySQL database 		 table called "LINK"
+    i. 		Scrape out each link starting from vimeo.com and save it to the 
+    		local MySQL database table called "LINK"
 
-    ii. 	Choose an unvisited link from the table "LINK" and scrape out all the links. Recognise 		   using the algorithm if the page is a user page. 
+    ii. 	Choose an unvisited link from the table "LINK" and scrape out 
+    		all the links. Recognise using the algorithm if the page is a user page. 
 
-    iii. 	If yes, then save the user data into the "USER" table and proceed with the next 			unvisited link from the LINK table.
+
+    iii. 	If yes, then save the user data into the "USER" table and
+    		proceed with the next unvisited link from the LINK table.
 
     iv.		Continue the above steps till 5000+ user profiles have been scraped.
 
