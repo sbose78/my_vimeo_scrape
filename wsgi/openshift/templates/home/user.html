@@ -122,10 +122,19 @@ hr{
 
 				$(document).ready(call_on_ready);				
 				function call_on_ready(){
-					//$("#user_data_fetch_button").change(function(){
+					$("input#search_key").keypress(function(event){
+						//alert(event.which);
+
+						if( event.which == 13 ){
+							event.preventDefault();
+							initiateSearch();
+						}
+
+					});
 					
 					$("#user_data_fetch_button").click(function(){
 
+						/*
 						reset();
 						var loading = document.createElement("img");
 						$(loading).attr("src","loading-vim.gif");//.attr("width","200").attr("height","200");
@@ -134,6 +143,8 @@ hr{
 						var name = $("input#search_key").val();
 						//alert(name);
 						getUserData(name);
+						*/
+						initiateSearch();
 					});
 
 					$("ul#filter li a").click(function(){
@@ -147,6 +158,19 @@ hr{
 
 						addUserResults($(this).attr("id"))
 					});
+				}
+
+				function initiateSearch(){
+
+						reset();
+						var loading = document.createElement("img");
+						$(loading).attr("src","loading-vim.gif");//.attr("width","200").attr("height","200");
+
+						$("div#results_count_filter").html(loading);
+						var name = $("input#search_key").val();
+						//alert(name);
+						getUserData(name);
+
 				}
 
 				function reset(){
