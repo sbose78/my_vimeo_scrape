@@ -3,13 +3,17 @@ Architecture
 
 	Deployed application uses :
 
+		URL of deployed applicaton : http://myscrape-nodejstest.rhcloud.com/
+
 		1. Database: MySQL 5.5 hosted on Amazon RDS .
-		2. Application: Django hosted on Redhat Paas Openshift.
+		2. Application Server: ( Redhat Paas ) Openshift http://openshift.redhat.com/ 
 		3. Front-end design & dev : HTML5 + CSS + Javascript + JQuery1.8
+
 
 	Development environment consisted of :
 		1. Database: MySQL 5.5 ( local )
-		2. Python
+		2. Scripting: Python
+		3. OS : Ubuntu 12.04
 
 
 
@@ -49,6 +53,9 @@ Installation
 
 
 4. All static files are placed in the wsgi/static directory.
+		The static files used are:
+			i. Jquery : jquery-1.8.3.min.js
+			ii. loading icon: loading-vim.gif
 
 5. The contents of the scrape_scripts are not required in the web-project. 
 
@@ -99,4 +106,125 @@ Installation
 				DB_LOCAL_USER = "root"
 				DB_LOCAL_PASSWORD = "qXXXXXXX6"
 				DB_LOCAL_DATABASE = "vimeodb"
+
+Modules of key interest
+----------------------
+
+1. wsgi/openshift/views.py  : 	views.py houses the request handlers. 
+2. wsgi/openshift/settings.py : This server configuration module contains settings specific to the 									OpenShift platform as well as the local development server.
+3. wsgi/openshift/urls.py : 
+
+		i. http://<SERVER_NAME>/ loads the web(and only) page of the application.
+
+					The web interface consists of a text box where one can key in a string and press ENTER to load the search results. The server-side requests are made as AJAX. The AJAX request URL is discussed in the next part.
+		
+		ii. The REST-style request for user information can be sent as follows:
+
+					HTTP GET http://<SERVER_NAME>/user/david
+
+					A JSON containing all the users whose name contain the substring DAVID will be returned by the server.
+
+					A partial response: 
+
+					        "count": 10,
+					        "users": [
+					            {
+					                "user_id": 1176,
+					                "name": "Ginevra Adamoli",
+					                "url": "http://vimeo.com/user3711006",
+					                "is_paid": 0,
+					                "has_video": 1,
+					                "has_featured_video": 0
+					            },
+					            {
+					                "user_id": 1360,
+					                "name": "Samuel Adam",
+					                "url": "http://vimeo.com/survivalgear",
+					                "is_paid": 0,
+					                "has_video": 10,
+					                "has_featured_video": 0
+					            },
+
+4. wsgi/openshift/templates/home/user.html :
+		
+		This is the homepage of the application and loads when the following request is made:
+		http://<SERVER_NAME>/
+
+
+
+The algorithm
+---------------
+
+The task was to scrape out the following data from a Vimeo user page:  
+	- name of the user.
+	- URL of the profile.
+	- Whether the user has uploaded any videos.
+	- Whether the user has an videos also featured as Staff Picks.
+	- Whether the user is a paid user. ( PAID/PRO )
+
+De-mystifying the above requirements, the following elements were dug out from the user page.
+
+	i. Check if the currently crawled page is a user-profile page.
+
+		<meta property="og:type" content="profile">
+
+	ii. Find out the name of the user.
+
+		<meta property="og:url" content="http://vimeo.com/markdenega">
+
+	iii. Find out the URL of the profile page.
+
+		<meta property="og:url" content="http://vimeo.com/markdenega">
+
+	iv. Whether the user has staff picks.
+
+		Existence of the following tree :
+
+			<div class="col_large">
+	                 <section class="block">
+	                    <h2>Featured Videos</h2>
+
+    v. Whether the user has uploads:
+
+    	Existence of the following tree :
+
+	    	<ul class="block floated_list stat_list bubble_list nipple_left">
+	            <li>
+	                <div>
+	                    <a href="/markdenega/videos">
+	                        <b>13</b> <span>Videos</span> 
+
+
+
+Approach
+------------
+
+I used a Python script to crawl vimeo and store all the links and user data in
+my local MySQL database. After details of 5000+ users were acquired, the DJANGO application was built locally and then deployed on Redhat PaaS ( Openshift ). The local MySQL database was migrated to Amazon RDS MySQL using another Python script.
+
+Even though there were options of using Beautiful Soup or Scrapy, I prefered experimenting with
+my own low-level implementation of the user page scraping algorithm.
+
+
+	
+
+In brief :
+
+    Scrape out each link starting from vimeo.com and save it to the local MySQL database table called "LINK"
+
+    Choose an unvisited link from the table "LINK" and scrape out all the links. Recognise using the algorithm if the page is a user page. 
+
+    If yes, then save the user data into the "USER" table and proceed with the next unvisited link from the LINK table.
+
+    Continue the above steps till 5000+ user profiles have been scraped.
+
+    Write the Django appliction with a REST-style request handler for requesting user info for all matching user names ( and sub-strings ). Place the function in views.py and update the urls.py
+
+    Write the HTML+ CSS + Javascript web page where the user has an option to query by user name ( full or partial ) and place it under wsgi/openshift/templates/home/
+
+    The request is made by an AJAX call and the response is parsed and shown in the web-page. The results are stored for re-presentation of the same data conditionally by filters.
+
+
+
+
 
