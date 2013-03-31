@@ -3,24 +3,15 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponse
 import json
 import MySQLdb
-#8044
+import dbprops
+
 # -*- coding: utf-8 -*-
 
-'''
-db = MySQLdb.connect(host="localhost",
-                       port = 3306,
-                       user="root",
-                     passwd="qwerty", # your password
-                     db="vimeo") # name of the data base
-
-'''
-
-db = MySQLdb.connect(host="vimeo.c21gzhluapko.ap-northeast-1.rds.amazonaws.com",
-                       port = 3306,
-                       user="sbose78",
-                     passwd="qwerty123456", # your password
-                     db="vimeodb") # name of the data base
-
+db = MySQLdb.connect(host=dbprops.DB_HOST,
+                       port = dbprops.DB_PORT,
+                       user=dbprops.DB_USER,
+                     passwd=dbprops.DB_PASSWORD, 
+                     db=dbprops.DB_DATABASE) 
 
 def home(request):
     return render_to_response('home/home.html')
@@ -28,31 +19,20 @@ def user(request):
 	return render_to_response('home/user.html')
 
 def get_user_data(request,username):
-	#return render_to_response('home/user.html')
-	'''
-	all_users = list()
-
-	for i in range(1,5):
-		response_data={}
-		response_data['username'] = username
-		response_data['result'] = 'failed'
-		response_data['message'] = 'You messed up'
-
-		all_users.append(response_data)
-
-	return HttpResponse(json.dumps(all_users), mimetype="application/json")
-	'''
-
 	return HttpResponse(json.dumps(search(username)),mimetype="application/json")
 
+'''
+	This function takes the search keyword as 'INPUT' and 
+	returns the JSON object containig the search results.
 
+'''
 
 def search(key):
 	cur = db.cursor() 
 	count = 0
 	key="%"+key+"%"
 	try:
-		# get the total number of users
+		# get the total (count) number of users
 		cur.execute("""SELECT count(*) from user where name LIKE %s""",(key))
 		for row in cur.fetchall():
 			count = row[0]
@@ -62,6 +42,7 @@ def search(key):
 
 		# get a maximum of 100 out of the total number of users
 		cur.execute("""SELECT * from user where name LIKE %s LIMIT 100""",(key))
+
 		all_results =list()
 		for row in cur.fetchall():
 			user_id=row[0]
@@ -89,7 +70,7 @@ def search(key):
 		final_deliverable.append(results)
 
 	except Exception, e:
-		print "error---" , e
+		print "[EXCEPTION]" , e
 
 	#print all_results
 	return final_deliverable

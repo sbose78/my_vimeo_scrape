@@ -1,5 +1,14 @@
+<!--  
+	Author: Shoubhik Bose 
+	Email: sbose78 at gmail.com
+
+-->
 
 <style type="text/css">
+
+body{
+	
+}
 
 input#search_key{
 
@@ -122,30 +131,34 @@ hr{
 
 				$(document).ready(call_on_ready);				
 				function call_on_ready(){
-					$("input#search_key").keypress(function(event){
-						//alert(event.which);
 
+					/* Initiate the search by pressing ENTER key.
+						Keycode for ENTER is 13.
+					*/
+					$("input#search_key").keypress(function(event){
 						if( event.which == 13 ){
 							event.preventDefault();
 							initiateSearch();
 						}
 
 					});
+
+					/*
+						Intiate the search by clicking the button.
+					*/
 					
 					$("#user_data_fetch_button").click(function(){
 
-						/*
-						reset();
-						var loading = document.createElement("img");
-						$(loading).attr("src","loading-vim.gif");//.attr("width","200").attr("height","200");
-
-						$("div#results_count_filter").html(loading);
-						var name = $("input#search_key").val();
-						//alert(name);
-						getUserData(name);
-						*/
 						initiateSearch();
 					});
+
+					/*
+						Reformat the filter links. 
+
+						When one filter link is clicked it becomes black 
+						and the rest becomes blue.
+
+					*/
 
 					$("ul#filter li a").click(function(){
 						//alert($(this).attr("id"));
@@ -162,17 +175,28 @@ hr{
 
 				function initiateSearch(){
 
+						// remove the previously searched results info *if any*
 						reset();
-						var loading = document.createElement("img");
-						$(loading).attr("src","loading-vim.gif");//.attr("width","200").attr("height","200");
 
+						// display loading GIF
+
+						var loading = document.createElement("img");
+						$(loading).attr("src","loading-vim.gif");
 						$("div#results_count_filter").html(loading);
+
+						// get the keyword to be used for search
 						var name = $("input#search_key").val();
-						//alert(name);
+						
 						getUserData(name);
 
 				}
 
+				/*
+					Removes the search listings that 
+					might have been generated from previous 
+					searches
+
+				*/
 				function reset(){
 					var node = document.getElementById("results_list");
 						while (node.hasChildNodes()) {
@@ -180,15 +204,23 @@ hr{
 						}
 				}
 
+
+				/*
+
+					Makes an Ajax request for fetching the search results.
+					The data from the server is returned as a JSON.
+
+
+				*/
+
 				function getUserData(search_key)
 				{
 
 						var finalUrl='/user/'+search_key;
-						//alert( "Fetching");// with "+image_id);
-					     var req=$.ajax({
+						var req=$.ajax({
 					                   type:"GET",
 					                   url:finalUrl,
-					                   //contentType: "application/json; charset=utf-8",
+					                   
 					                   dataType:"JSON",
 					                   success: function(results_array){
 					                   		search_results =  results_array[0].users;
@@ -197,15 +229,22 @@ hr{
 					                   		addUserResults("filter_all");
 					                },
 					               complete:function(jqXHR, textStatus) {
-					                 // alert("request complete "+textStatus);
+					                   //alert("request complete "+textStatus);
 					               },
 					              error: function(xhr, textStatus, errorThrown){
-					                //  alert('request failed->'+textStatus);
+					                  alert('There was a problem with the request. Please contact sbose78@gmail.com with the following info : '+textStatus);
 					              }   
 					              
 					              
 					     });  
 				}
+
+
+				/*
+
+					Displays the search results.
+
+				*/
 
 				function addUserResults(filter_type){
 					reset();
@@ -235,12 +274,12 @@ hr{
 							"<BR>";
 
 							$(result).html(name+isPaid + has_featured_video + has_video);
-							//$(result).html(str);
-							$("#results_list").append(result);
+							
+							$("#results_list").append(result); // adding to the parent DOM element.
 						}
 
 					}
-
+					// displays the number of results for the current filter used.
 					$("div#results_count_filter").html(count+"&nbsp; filtered results out of ");
 					
 					

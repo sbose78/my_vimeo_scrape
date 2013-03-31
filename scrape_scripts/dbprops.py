@@ -1,0 +1,10 @@
+DB_AWS_HOST = "vimeo.c21gzhluapko.ap-northeast-1.rds.amazonaws.com"
+DB_AWS_PORT =3306
+DB_AWS_USER = "sbose78"
+DB_AWS_PASSWORD = "qwerty123456"
+DB_AWS_DATABASE = "vimeodb"
+DB_LOCAL_HOST = "vimeo.c21gzhluapko.ap-northeast-1.rds.amazonaws.com"
+DB_LOCAL_PORT =3306
+DB_LOCAL_USER = "sbose78"
+DB_LOCAL_PASSWORD = "qwerty123456"
+DB_LOCAL_DATABASE = "vimeodb"
