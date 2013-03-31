@@ -34,18 +34,18 @@ DB_DATABASE = "vimeodb"
 
 3. The database used in the LIVE environment is a MySQL database.
 
-1 table named "USER" is required:
+		One table named "USER" is required:
 
-CREATE TABLE `user` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(45) DEFAULT NULL,
-  `url` varchar(45) DEFAULT NULL,
-  `has_video` int(11) DEFAULT NULL,
-  `has_featured_video` int(11) DEFAULT NULL,
-  `is_paid` int(11) DEFAULT NULL,
-  `inserted_into_amazon` int(11) DEFAULT '0',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5091 DEFAULT CHARSET=latin1;
+		CREATE TABLE `user` (
+		  `id` int(11) NOT NULL AUTO_INCREMENT,
+		  `name` varchar(45) DEFAULT NULL,
+		  `url` varchar(45) DEFAULT NULL,
+		  `has_video` int(11) DEFAULT NULL,
+		  `has_featured_video` int(11) DEFAULT NULL,
+		  `is_paid` int(11) DEFAULT NULL,
+		  `inserted_into_amazon` int(11) DEFAULT '0',
+		  PRIMARY KEY (`id`)
+		) ENGINE=InnoDB AUTO_INCREMENT=5091 DEFAULT CHARSET=latin1;
 
 
 4. All static files are placed in the wsgi/static directory.
