@@ -185,7 +185,7 @@ hr{
 						$("div#results_count_filter").html(loading);
 
 						// get the keyword to be used for search
-						var name = $("input#search_key").val();
+						var name = $("input#search_key").val().trim();
 						
 						getUserData(name);
 
