@@ -213,7 +213,7 @@ Installation
 				DB_LOCAL_PASSWORD = "qXXXXXXX6"
 				DB_LOCAL_DATABASE = "vimeodb"
 
-Modules of key interest
+Notable modules
 ----------------------
 
 1. wsgi/openshift/views.py  : 	views.py houses the request handlers. 
