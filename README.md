@@ -111,6 +111,7 @@ Modules of key interest
 ----------------------
 
 1. wsgi/openshift/views.py  : 	views.py houses the request handlers. 
+
 2. wsgi/openshift/settings.py : This server configuration module contains settings specific to the 									OpenShift platform as well as the local development server.
 3. wsgi/openshift/urls.py : 
 
@@ -156,11 +157,15 @@ The algorithm
 ---------------
 
 The task was to scrape out the following data from a Vimeo user page:  
-	- name of the user.
-	- URL of the profile.
-	- Whether the user has uploaded any videos.
-	- Whether the user has an videos also featured as Staff Picks.
-	- Whether the user is a paid user. ( PAID/PRO )
+	1. name of the user.
+
+	2. URL of the profile.
+
+	3. Whether the user has uploaded any videos.
+
+	4. Whether the user has an videos also featured as Staff Picks.
+
+	5. Whether the user is a paid user. ( PAID/PRO )
 
 De-mystifying the above requirements, the following elements were dug out from the user page.
 
@@ -210,19 +215,22 @@ my own low-level implementation of the user page scraping algorithm.
 
 In brief :
 
-    Scrape out each link starting from vimeo.com and save it to the local MySQL database table called "LINK"
+    i. 		Scrape out each link starting from vimeo.com and save it to the local MySQL database 		 table called "LINK"
 
-    Choose an unvisited link from the table "LINK" and scrape out all the links. Recognise using the algorithm if the page is a user page. 
+    ii. 	Choose an unvisited link from the table "LINK" and scrape out all the links. Recognise 		   using the algorithm if the page is a user page. 
 
-    If yes, then save the user data into the "USER" table and proceed with the next unvisited link from the LINK table.
+    iii. 	If yes, then save the user data into the "USER" table and proceed with the next 			unvisited link from the LINK table.
 
-    Continue the above steps till 5000+ user profiles have been scraped.
+    iv.		Continue the above steps till 5000+ user profiles have been scraped.
 
-    Write the Django appliction with a REST-style request handler for requesting user info for all matching user names ( and sub-strings ). Place the function in views.py and update the urls.py
+    v. 		Write the Django appliction with a REST-style request handler for requesting user 
+    		info for all matching user names ( and sub-strings ). Place the function in views.py and update the urls.py
 
-    Write the HTML+ CSS + Javascript web page where the user has an option to query by user name ( full or partial ) and place it under wsgi/openshift/templates/home/
+    vi.   	Write the HTML+ CSS + Javascript web page where the user has an option to 
+    		query by user  name ( full or partial ) and place it under wsgi/openshift/templates/home/
 
-    The request is made by an AJAX call and the response is parsed and shown in the web-page. The results are stored for re-presentation of the same data conditionally by filters.
+    viii.  The request is made by an AJAX call and the response is parsed and 
+    	   shown in the web-page. The results are stored for re-presentation of the same data conditionally by filters.
 
 
 
