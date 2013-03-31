@@ -1,6 +1,6 @@
 
 
-The URL of the deployed appplication
+The URL of the deployed application
 ---------------------------------------
 
 		http://myscrape-nodejstest.rhcloud.com/
