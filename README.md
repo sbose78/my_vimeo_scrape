@@ -20,16 +20,16 @@ Installation
 
 2. Add the properties files called dbprops.py and place it under wsgi/openshift
 
-The file contents should be as follows:
+		The file contents should be as follows:
 
-DB_HOST = "127.0.0.1"
-DB_PORT =3306
-DB_USER = "my_user"
-DB_PASSWORD = "my_password"
-DB_DATABASE = "vimeodb"
+		DB_HOST = "127.0.0.1"
+		DB_PORT =3306
+		DB_USER = "my_user"
+		DB_PASSWORD = "my_password"
+		DB_DATABASE = "vimeodb"
 
 
-( The dbprops.py has been put in .gitignore to avoid giving out the database credentials publicly )
+		( The dbprops.py has been put in .gitignore to avoid giving out the database credentials publicly )
 
 
 3. The database used in the LIVE environment is a MySQL database.
