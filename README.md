@@ -1,66 +1,102 @@
-Django on OpenShift
-===================
+Architecture 
+-------------
 
-This git repository helps you get up and running quickly w/ a Django
-installation on OpenShift.  The Django project name used in this repo
-is 'openshift' but you can feel free to change it.  Right now the
-backend is sqlite3 and the database runtime is found in
-`$OPENSHIFT_DATA_DIR/sqlite3.db`.
+	Deployed application uses :
 
-Before you push this app for the first time, you will need to change
-the [Django admin password](#admin-user-name-and-password).
-Then, when you first push this
-application to the cloud instance, the sqlite database is copied from
-`wsgi/openshift/sqlite3.db` with your newly changed login
-credentials. Other than the password change, this is the stock
-database that is created when `python manage.py syncdb` is run with
-only the admin app installed.
+		1. Database: MySQL 5.5 hosted on Amazon RDS .
+		2. Application: Django hosted on Redhat Paas Openshift.
+		3. Front-end design & dev : HTML5 + CSS + Javascript + JQuery1.8
 
-On subsequent pushes, a `python manage.py syncdb` is executed to make
-sure that any models you added are created in the DB.  If you do
-anything that requires an alter table, you could add the alter
-statements in `GIT_ROOT/.openshift/action_hooks/alter.sql` and then use
-`GIT_ROOT/.openshift/action_hooks/deploy` to execute that script (make
-sure to back up your database w/ `rhc app snapshot save` first :) )
+	Development environment consisted of :
+		1. Database: MySQL 5.5 ( local )
+		2. Python
 
 
-Running on OpenShift
---------------------
 
-Create an account at http://openshift.redhat.com/
+Installation
+------------
 
-Install the RHC client tools if you have not already done so:
-    
-    sudo gem install rhc
+1. Clone this repository to your local system.
 
-Create a python-2.6 application
+2. Add the properties files called dbprops.py and place it under wsgi/openshift
 
-    rhc app create -a django -t python-2.6
+The file contents should be as follows:
 
-Add this upstream repo
+DB_HOST = "127.0.0.1"
+DB_PORT =3306
+DB_USER = "my_user"
+DB_PASSWORD = "my_password"
+DB_DATABASE = "vimeodb"
 
-    cd django
-    git remote add upstream -m master git://github.com/openshift/django-example.git
-    git pull -s recursive -X theirs upstream master
 
-Then push the repo upstream
+( The dbprops.py has been put in .gitignore to avoid giving out the database credentials publicly )
 
-    git push
 
-Here, the [admin user name and password will be displayed](#admin-user-name-and-password), so pay
-special attention.
-	
-That's it. You can now checkout your application at:
+3. The database used in the LIVE environment is a MySQL database.
 
-    http://django-$yournamespace.rhcloud.com
+1 table named "USER" is required:
 
-Admin user name and password
-----------------------------
-As the `git push` output scrolls by, keep an eye out for a
-line of output that starts with `CLIENT_MESSAGE: `. This line
-contains the generated admin password that you will need to begin
-administering your Django app. This is the only time the password
-will be displayed, so be sure to save it somewhere. You might want 
-to pipe the output of the git push to a text file so you can grep for
-the password later.
+CREATE TABLE `user` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) DEFAULT NULL,
+  `url` varchar(45) DEFAULT NULL,
+  `has_video` int(11) DEFAULT NULL,
+  `has_featured_video` int(11) DEFAULT NULL,
+  `is_paid` int(11) DEFAULT NULL,
+  `inserted_into_amazon` int(11) DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5091 DEFAULT CHARSET=latin1;
+
+
+4. All static files are placed in the wsgi/static directory.
+
+5. The contents of the scrape_scripts are not required in the web-project. 
+
+		i. scrape.py was used for crawling vimeo.com and saving the links in the LINK table
+			and user-data in the USER table.
+
+			The DDL for the LINK table
+
+					CREATE TABLE `link` (
+						  `id` int(11) NOT NULL AUTO_INCREMENT,
+						  `url` varchar(45) DEFAULT NULL,
+						  `type` varchar(45) DEFAULT NULL,
+						  `visited` int(11) DEFAULT NULL,
+						  PRIMARY KEY (`id`),
+						  UNIQUE KEY `url_UNIQUE` (`url`)
+					) ENGINE=InnoDB AUTO_INCREMENT=1179195 DEFAULT CHARSET=latin1;		
+
+			The DDL for the USER table :
+
+					CREATE TABLE `user` (
+						  `id` int(11) NOT NULL AUTO_INCREMENT,
+						  `name` varchar(45) DEFAULT NULL,
+						  `url` varchar(45) DEFAULT NULL,
+						  `has_video` int(11) DEFAULT NULL,
+						  `has_featured_video` int(11) DEFAULT NULL,
+						  `is_paid` int(11) DEFAULT NULL,
+						  `inserted_into_amazon` int(11) DEFAULT '0',
+						  PRIMARY KEY (`id`)
+					) ENGINE=InnoDB AUTO_INCREMENT=5091 DEFAULT CHARSET=latin1;
+
+
+
+
+		ii. dbtasks.py was executed to copy all the locally stored user-data to the Amazon MySQL 		database.		
+
+		iii. The above 2 files require a dbprops.py file which contains the database connection 
+			 credentials.
+
+			 The dbprops.py needs to be added and this is how it should look like:
+
+			 	DB_AWS_HOST = "vimeXXXXXXXXXXXXXXXXXXXxonaws.com"
+			 	DB_AWS_PORT =3306
+			 	DB_AWS_USER = "sbose78"
+				DB_AWS_PASSWORD = "XXXXXXX"
+				DB_AWS_DATABASE = "vimeodb"
+				DB_LOCAL_HOST = "vimXXXXXXXXXXXXXXazonaws.com"
+				DB_LOCAL_PORT =3306
+				DB_LOCAL_USER = "root"
+				DB_LOCAL_PASSWORD = "qXXXXXXX6"
+				DB_LOCAL_DATABASE = "vimeodb"
 
