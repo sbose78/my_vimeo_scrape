@@ -1,3 +1,98 @@
+
+
+The objective
+---------------
+
+The task was to scrape out the following data from 5000+ Vimeo user page 
+and save it to a MySQL database.
+
+	1. name of the user.
+
+	2. URL of the profile.
+
+	3. Whether the user has uploaded any videos.
+
+	4. Whether the user has an videos also featured as Staff Picks.
+
+	5. Whether the user is a paid user. ( PAID/PRO )
+
+
+The algorithm
+------------
+
+De-mystifying the above requirements, 
+the following elements were dug out from the user page using the hints mentioned below.
+
+	i. Check if the currently crawled page is a user-profile page.
+
+		<meta property="og:type" content="profile">
+
+	ii. Find out the name of the user.
+
+		<meta property="og:url" content="http://vimeo.com/markdenega">
+
+	iii. Find out the URL of the profile page.
+
+		<meta property="og:url" content="http://vimeo.com/markdenega">
+
+	iv. Whether the user has staff picks.
+
+		Existence of the following tree :
+
+			<div class="col_large">
+	                 <section class="block">
+	                    <h2>Featured Videos</h2>
+
+    v. Whether the user has uploads:
+
+    	Existence of the following tree :
+
+	    	<ul class="block floated_list stat_list bubble_list nipple_left">
+	            <li>
+	                <div>
+	                    <a href="/markdenega/videos">
+	                        <b>13</b> <span>Videos</span> 
+
+
+
+Approach
+------------
+
+I used a Python script to crawl vimeo and store all the links and user data in
+my local MySQL database. After details of 5000+ users were acquired, the DJANGO application was built locally and then deployed on Redhat PaaS ( Openshift ). The local MySQL database was migrated to Amazon RDS MySQL using another Python script.
+
+Even though there were options of using Beautiful Soup or Scrapy, I prefered experimenting with
+my own low-level implementation of the user page scraping algorithm.
+
+
+	
+
+In brief :
+
+    i. 		Scrape out each link starting from vimeo.com and save it to the 
+    		local MySQL database table called "LINK"
+
+    ii. 	Choose an unvisited link from the table "LINK" and scrape out and save 
+    		all the links. Recognise using the algorithm if the page is a user page. 
+
+
+    iii. 	If yes, then save the user data into the "USER" table and
+    		proceed with the next unvisited link from the LINK table.
+
+    iv.		Continue the above steps till 5000+ user profiles have been scraped.
+
+    v. 		Write the Django appliction with a REST-style request handler for requesting user 
+    		info for all matching user names ( and sub-strings ). 
+    		Place the function in views.py and update the urls.py
+
+    vi.   	Write the HTML+ CSS + Javascript web page where the user has an option to 
+    		query by user  name ( full or partial ) and place it under wsgi/openshift/templates/home/
+
+    viii.  The request is made by an AJAX call and the response is parsed and 
+    	   shown in the web-page. The results are stored for re-presentation of the same data conditionally by filters.
+
+
+
 Architecture 
 -------------
 
@@ -150,92 +245,6 @@ Modules of key interest
 		
 		This is the homepage of the application and loads when the following request is made:
 		http://<SERVER_NAME>/
-
-
-
-The algorithm
----------------
-
-The task was to scrape out the following data from a Vimeo user page:  
-
-	1. name of the user.
-
-	2. URL of the profile.
-
-	3. Whether the user has uploaded any videos.
-
-	4. Whether the user has an videos also featured as Staff Picks.
-
-	5. Whether the user is a paid user. ( PAID/PRO )
-
-De-mystifying the above requirements, the following elements were dug out from the user page.
-
-	i. Check if the currently crawled page is a user-profile page.
-
-		<meta property="og:type" content="profile">
-
-	ii. Find out the name of the user.
-
-		<meta property="og:url" content="http://vimeo.com/markdenega">
-
-	iii. Find out the URL of the profile page.
-
-		<meta property="og:url" content="http://vimeo.com/markdenega">
-
-	iv. Whether the user has staff picks.
-
-		Existence of the following tree :
-
-			<div class="col_large">
-	                 <section class="block">
-	                    <h2>Featured Videos</h2>
-
-    v. Whether the user has uploads:
-
-    	Existence of the following tree :
-
-	    	<ul class="block floated_list stat_list bubble_list nipple_left">
-	            <li>
-	                <div>
-	                    <a href="/markdenega/videos">
-	                        <b>13</b> <span>Videos</span> 
-
-
-
-Approach
-------------
-
-I used a Python script to crawl vimeo and store all the links and user data in
-my local MySQL database. After details of 5000+ users were acquired, the DJANGO application was built locally and then deployed on Redhat PaaS ( Openshift ). The local MySQL database was migrated to Amazon RDS MySQL using another Python script.
-
-Even though there were options of using Beautiful Soup or Scrapy, I prefered experimenting with
-my own low-level implementation of the user page scraping algorithm.
-
-
-	
-
-In brief :
-
-    i. 		Scrape out each link starting from vimeo.com and save it to the 
-    		local MySQL database table called "LINK"
-
-    ii. 	Choose an unvisited link from the table "LINK" and scrape out 
-    		all the links. Recognise using the algorithm if the page is a user page. 
-
-
-    iii. 	If yes, then save the user data into the "USER" table and
-    		proceed with the next unvisited link from the LINK table.
-
-    iv.		Continue the above steps till 5000+ user profiles have been scraped.
-
-    v. 		Write the Django appliction with a REST-style request handler for requesting user 
-    		info for all matching user names ( and sub-strings ). Place the function in views.py and update the urls.py
-
-    vi.   	Write the HTML+ CSS + Javascript web page where the user has an option to 
-    		query by user  name ( full or partial ) and place it under wsgi/openshift/templates/home/
-
-    viii.  The request is made by an AJAX call and the response is parsed and 
-    	   shown in the web-page. The results are stored for re-presentation of the same data conditionally by filters.
 
 
 
