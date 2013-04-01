@@ -79,7 +79,7 @@ my own low-level implementation of the self-designed user profile page scraping 
 In brief :
 
 
-    i. 		(Staring from http://vimeo.com)
+    i. 		(Starting from http://vimeo.com)
     		Scrape out each link starting from vimeo.com and save it to the 
     		local MySQL database table called "LINK"
 
