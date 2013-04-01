@@ -28,6 +28,7 @@ def get_user_data(request,username):
 '''
 
 def search(key):
+	final_deliverable=list()
 	cur = db.cursor() 
 	count = 0
 	key="%"+key+"%"
@@ -60,9 +61,7 @@ def search(key):
 			user['has_featured_video'] = has_featured_video
 			user['is_paid'] = is_paid
 
-			all_results.append(user)
-		final_deliverable=list()
-
+			all_results.append(user)		
 		results = {}
 		results['count']=count
 		results['users']= all_results
