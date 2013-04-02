@@ -7,11 +7,6 @@ import dbprops
 
 # -*- coding: utf-8 -*-
 
-db = MySQLdb.connect(host=dbprops.DB_HOST,
-                       port = dbprops.DB_PORT,
-                       user=dbprops.DB_USER,
-                     passwd=dbprops.DB_PASSWORD, 
-                     db=dbprops.DB_DATABASE) 
 
 def home(request):
     return render_to_response('home/home.html')
@@ -28,6 +23,11 @@ def get_user_data(request,username):
 '''
 
 def search(key):
+	db = MySQLdb.connect(host=dbprops.DB_HOST,
+                       port = dbprops.DB_PORT,
+                       user=dbprops.DB_USER,
+                     passwd=dbprops.DB_PASSWORD, 
+                     db=dbprops.DB_DATABASE) 
 	final_deliverable=list()
 	cur = db.cursor() 
 	count = 0
@@ -67,11 +67,11 @@ def search(key):
 		results['users']= all_results
 
 		final_deliverable.append(results)
-		#db.close()
+		
 
 	except Exception, e:
 		print "[EXCEPTION]" , e
 
 	#print all_results
-
+	db.close()
 	return final_deliverable
